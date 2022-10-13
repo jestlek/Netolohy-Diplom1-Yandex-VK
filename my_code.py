@@ -1,6 +1,5 @@
 import requests
 import json
-from pprint import pprint
 from datetime import datetime
 import os
 
@@ -81,18 +80,22 @@ class YaUploader:
         headers = self.get_headers()
         requests.put(url + '?path=' + file_path, headers=headers)
 
-    def upload(self, file_path, filename):
-        self._create_folder(file_path)
-        link_dict = self._upload_link(file_path)
-        href = link_dict['href']
-        response = requests.put(href, data=open(filename, 'rb'))
-        response.raise_for_status()
-        if response.status_code == 201:
-            print('Success')
+    def upload(self, file_path):
+        self._create_folder('download_photos')
+        count = 0
+        for photo in photos_info:
+            link_dict = self._upload_link(file_path + '/' + photo['file_name'])
+            href = link_dict['href']
+            response = requests.put(href, data=open(f'download_photos/{photo["file_name"]}', 'rb'))
+            response.raise_for_status()
+            count += 1
+            if response.status_code == 201:
+                print(f'...Фото №{count} загружено')
+        print(f'Было загружено {count} фото на Яндекс Диск')
 
 
 if __name__ == '__main__':
     download_photos()
     token = input('Введите token Yandex: ')
     uploader = YaUploader(token)
-    result = uploader.upload('download_photos/', 'photos.json')
+    result = uploader.upload('download_photos')
