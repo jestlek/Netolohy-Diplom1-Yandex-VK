@@ -81,7 +81,7 @@ class YaUploader:
         requests.put(url + '?path=' + file_path, headers=headers)
 
     def upload(self, file_path):
-        self._create_folder('download_photos')
+        self._create_folder(file_path)
         count = 0
         for photo in photos_info:
             link_dict = self._upload_link(file_path + '/' + photo['file_name'])
